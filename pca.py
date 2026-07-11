@@ -111,3 +111,8 @@ for i in range(len(autovalores)):
     for feature, peso in zip(features, autovetores[:, i]):
         print(f"{feature:15} {peso: .4f}")
 
+
+#projecao
+
+proj = X_centered.to_numpy() @ autovetores
+
