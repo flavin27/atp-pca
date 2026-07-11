@@ -2,14 +2,12 @@ from pca import features, variancia_explicada, proj, autovetores, df
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
 import pca
+from adjustText import adjust_text
 
 
 
-# -------------------------
 # 1) Heatmap da correlação
-# -------------------------
 
 corr = pca.X_centered.corr()
 
@@ -35,9 +33,7 @@ plt.tight_layout()
 plt.show()
 
 
-# -------------------------
 # 2) Scree Plot
-# -------------------------
 
 plt.figure(figsize=(6,4))
 plt.bar(
@@ -53,39 +49,53 @@ plt.title("Scree Plot")
 plt.show()
 
 
-# -------------------------
 # 3) Scatter PC1 x PC2
-# -------------------------
 
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(10,8))
 
 plt.scatter(
     proj[:,0],
-    proj[:,1]
+    proj[:,1],
+    alpha=0.5
 )
 
-for i, name in enumerate(df["PlayerName"]):
-    plt.text(
-        proj[i,0],
-        proj[i,1],
-        name,
-        fontsize=8
+texts = []
+
+# nomes apenas do top 10
+top10 = df.nlargest(10, "ATPPoints")
+
+for _, player in top10.iterrows():
+    idx = df.index[df["PlayerId"] == player["PlayerId"]][0]
+
+    texts.append(
+        plt.text(
+            proj[idx,0],
+            proj[idx,1],
+            player["PlayerName"],
+            fontsize=9,
+            bbox=dict(
+                boxstyle="round,pad=0.3",
+                fc="white",
+                alpha=0.7
+            )
+        )
     )
+
+# move os textos para evitar sobreposição
+adjust_text(
+    texts,
+    arrowprops=dict(
+        arrowstyle="-",
+        color="gray"
+    )
+)
 
 plt.axhline(0)
 plt.axvline(0)
 
-plt.xlabel(
-    f"PC1 ({variancia_explicada[0]*100:.1f}%)"
-)
-
-plt.ylabel(
-    f"PC2 ({variancia_explicada[1]*100:.1f}%)"
-)
+plt.xlabel(f"PC1 ({variancia_explicada[0]*100:.1f}%)")
+plt.ylabel(f"PC2 ({variancia_explicada[1]*100:.1f}%)")
 
 plt.title("Jogadores projetados em PC1 x PC2")
 
 plt.show()
-
-
-

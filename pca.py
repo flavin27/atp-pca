@@ -33,6 +33,9 @@ ranking = ranking[
     ]
 ]
 
+# Remove possíveis entradas duplicadas (mesmo PlayerId com formas diferentes do nome)
+ranking = ranking.drop_duplicates(subset="PlayerId", keep="first")
+
 # Estatísticas ATP
 
 serve = load_atp_stat(
@@ -61,6 +64,7 @@ df = df.merge(pressure, on="PlayerId")
 
 print("\nDataset final:")
 print(df.head())
+
 
 # Matriz de correlação
 
